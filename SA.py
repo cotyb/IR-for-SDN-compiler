@@ -38,16 +38,17 @@ class SA(object):
 
     def sa_str(self):
         for edge in self.edges:
-            return edge
+            print edge
 
 
 class Edge(object):
     '''
     edge is composed of two nodes, guard, action, update
+    guard is the string joined with &&
+    update is the string joined with &&
     '''
 
     def __init__(self, start, end, guard, action, update):
-        assert start != end
         assert type(start) == Node
         assert type(end) == Node
         self.start = start
