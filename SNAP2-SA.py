@@ -3,6 +3,10 @@ import networkx as nx
 import snap.policies as policies
 import snap.stateful as stateful
 import SA
+import graphviz as gv
+import sys
+
+sys.path.append("E:\Program Files (x86)\Graphviz2.38\bin\dot")
 
 class BinaryTree(object):
     def __init__(self, item):
@@ -120,8 +124,18 @@ def xfdd_tree2_SA(xfdd_tree):
         sa.add_edge(start, end, guard, action, update)
     return sa
 
+def draw_dfa(sa, filename="xfdd_sa"):
+    g = gv.Digraph(format="pdf")
+    g.node(str(1), color="red")
+    g.node(str(2), color="blue")
+
+    for edge in sa.edges:
+        g.edge(str(edge.start.id), str(edge.end.id), label=edge.guard + edge.action + edge.update)
+    g.render(filename)
+
 if __name__ == "__main__":
     xfdd = SNAP_policy2_xfdd()
     xfdd_tree = xfdd2_binarytree(xfdd)
     sa = xfdd_tree2_SA(xfdd_tree)
     sa.sa_str()
+    draw_dfa(sa)
