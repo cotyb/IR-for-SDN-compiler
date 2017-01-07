@@ -35,8 +35,8 @@ class SA(object):
             print "the edge does not exist"
 
 
-    def draw_sa(self):
-        file = open("dfa", "w")
+    def draw_sa(self, file):
+        file = open(file, "w")
         print >> file, "digraph {"
         for node in self.nodes:
             print >> file, "    %s" %node

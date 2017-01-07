@@ -359,9 +359,9 @@ if __name__ == '__main__':
     dfa = RegexDFA('(dd*|dd*.dd*|.dd*)(' + RegexDFA.EPSILON +
                    '|10(s|' + RegexDFA.EPSILON
                    + ')dd*)|10(s|' + RegexDFA.EPSILON + ')dd*')
-    dfa = RegexDFA('abc/ab/')
+    dfa = RegexDFA('.*c.*')
     dfa.minimize_dfa()
     dfa.print_dfa_edges()
-    print dfa._dfa_node
+    print dfa._dfa
 
     dfa.draw_dfa()
