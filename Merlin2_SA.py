@@ -122,14 +122,16 @@ def policy2_SA(statement, constraint):
                     elif edge[2] in switch_fun.keys():
                         guard = predict
                         new_node = sa.generate_node()
-                        action = 'FWD(%s)' %new_node.id
+                        # action = 'FWD(%s)' %new_node.id
+                        action = 'FWD(%s)' %edge[2]
                         update = ''
                         sa_edge = SA.Edge(sa_edge_start, new_node, guard, action, update)
                         sa.add_edge_direct(sa_edge)
                         new_edge_start = new_node
                         new_edge_end = sa_edge_end
                         guard = fun_guard_update[switch_fun[edge[2]]][0]
-                        action = "FW(%s)" %(new_edge_end.id) + " && " + switch_fun[edge[2]]
+                        # action = "FW(%s)" %(new_edge_end.id) + " && " + switch_fun[edge[2]]
+                        action = "FWD(.)" + " && " + switch_fun[edge[2]]
                         if fun_guard_update[switch_fun[edge[2]]][1] == '':
                             update = ''
                         else:
@@ -151,14 +153,16 @@ def policy2_SA(statement, constraint):
                     elif edge[2] in switch_fun.keys():
                         guard = ''
                         new_node = sa.generate_node()
-                        action = 'FWD(%s)' %new_node.id
+                        # action = 'FWD(%s)' %new_node.id
+                        action = 'FWD(%s)' %edge[2]
                         update = ''
                         sa_edge = SA.Edge(sa_edge_start, new_node, guard, action, update)
                         sa.add_edge_direct(sa_edge)
                         new_edge_start = new_node
                         new_edge_end = sa_edge_end
                         guard = fun_guard_update[switch_fun[edge[2]]][0]
-                        action = "FW(%s)" %(new_edge_end.id) + " && " + switch_fun[edge[2]]
+                        # action = "FW(%s)" %(new_edge_end.id) + " && " + switch_fun[edge[2]]
+                        action = "FWD(.)" + " && " + switch_fun[edge[2]]
                         if fun_guard_update[switch_fun[edge[2]]][1] == '':
                             update = ''
                         else:
@@ -212,14 +216,16 @@ def policy2_SA(statement, constraint):
                     elif edge[2] in switch_fun.keys():
                         guard = predict + ' && ' + 'bw[s1][s2]<%s' %(rate) if flag == 'max' else 'bw[s1][s2]>%s' %(rate)
                         new_node = sa.generate_node()
-                        action = 'FWD(%s)' %new_node.id
+                        # action = 'FWD(%s)' %new_node.id
+                        action = 'FWD(%s)' %edge[2]
                         update = 's1=s2, bw[s1][s2]-=rate, s2=rv(FWD)'
                         sa_edge = SA.Edge(sa_edge_start, new_node, guard, action, update)
                         sa.add_edge_direct(sa_edge)
                         new_edge_start = new_node
                         new_edge_end = sa_edge_end
                         guard = fun_guard_update[switch_fun[edge[2]]][0] + ' && ' + 'bw[s1][s2]<%s' %(rate) if flag == 'max' else 'bw[s1][s2]>%s' %(rate)
-                        action = "FW(%s)" %(new_edge_end.id) + " && " + switch_fun[edge[2]]
+                        # action = "FW(%s)" %(new_edge_end.id) + " && " + switch_fun[edge[2]]
+                        action = "FWD(.)"  + " && " + switch_fun[edge[2]]
                         if fun_guard_update[switch_fun[edge[2]]][1] == '':
                             update = 's1=s2, bw[s1][s2]-=rate, s2=rv(FWD)'
                         else:
@@ -242,14 +248,16 @@ def policy2_SA(statement, constraint):
                     elif edge[2] in switch_fun.keys():
                         guard = 'bw[s1][s2]<%s' %(rate) if flag == 'max' else 'bw[s1][s2]>%s' %(rate)
                         new_node = sa.generate_node()
-                        action = 'FWD(%s)' %new_node.id
+                        # action = 'FWD(%s)' %new_node.id
+                        action = 'FWD(%s)' %edge[2]
                         update = 's1=s2, bw[s1][s2]-=rate, s2=rv(FWD)'
                         sa_edge = SA.Edge(sa_edge_start, new_node, guard, action, update)
                         sa.add_edge_direct(sa_edge)
                         new_edge_start = new_node
                         new_edge_end = sa_edge_end
                         guard = fun_guard_update[switch_fun[edge[2]]][0] + ' && ' + 'bw[s1][s2]<%s' %(rate) if flag == 'max' else 'bw[s1][s2]>%s' %(rate)
-                        action = "FW(%s)" %(new_edge_end.id) + " && " + switch_fun[edge[2]]
+                        # action = "FW(%s)" %(new_edge_end.id) + " && " + switch_fun[edge[2]]
+                        action = "FWD(.)" + " && " + switch_fun[edge[2]]
                         if fun_guard_update[switch_fun[edge[2]]][1] == '':
                             update = 's1=s2, bw[s1][s2]-=rate, s2=rv(FWD)'
                         else:
