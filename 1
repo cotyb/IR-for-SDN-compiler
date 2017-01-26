@@ -1,0 +1,14 @@
+digraph {
+    1
+    3
+    4
+    5
+    2
+        1 -> 3 [label=" (ip.src = 192.168.1.1 and ip.dst = 192.168.1.2 and tcp.dst = 20)  && bw[s1][s2]<50MB/sFWD(a)s1=s2, bw[s1][s2]-=rate, s2=rv(FWD)"]
+        3 -> 2 [label=" && bw[s1][s2]<50MB/sFWD(.) && dpis1=s2, bw[s1][s2]-=rate, s2=rv(FWD)"]
+        1 -> 4 [label=" (ip.src = 192.168.1.1 and ip.dst = 192.168.1.2 and tcp.dst = 20)  && bw[s1][s2]<50MB/sFWD(b)s1=s2, bw[s1][s2]-=rate, s2=rv(FWD)"]
+        4 -> 2 [label=" && bw[s1][s2]<50MB/sFWD(.) && dpis1=s2, bw[s1][s2]-=rate, s2=rv(FWD)"]
+        1 -> 1 [label="bw[s1][s2]<50MB/sFWD(.)s1=s2, bw[s1][s2]-=rate, s2=rv(FWD)"]
+        2 -> 2 [label="bw[s1][s2]<50MB/sFWD(.)s1=s2, bw[s1][s2]-=rate, s2=rv(FWD)"]
+        2 -> 5 [label="FWD(e)"]
+}

@@ -5,6 +5,7 @@ import snap.stateful as stateful
 import SA
 import graphviz as gv
 import sys
+import pickle
 
 sys.path.append("E:\Program Files (x86)\Graphviz2.38\bin\dot")
 
@@ -116,12 +117,12 @@ def xfdd_tree2_SA(xfdd_tree):
     start = SA.Node(1)
     end = SA.Node(2)
     sa = SA.SA(start, end)
-    sa.add_edge(start, start, "", "FWD(.)", "")
+    sa.add_edge_indirect(start, start, "", "FWD(.)", "")
     all_path = binary_tree_paths(xfdd_tree)
     action = "FWD(e)"
     for path in all_path:
         guard, update = path.split("&& |||")
-        sa.add_edge(start, end, guard, action, update)
+        sa.add_edge_indirect(start, end, guard, action, update)
     return sa
 
 def draw_dfa(sa, filename="xfdd_sa"):
@@ -137,5 +138,9 @@ if __name__ == "__main__":
     xfdd = SNAP_policy2_xfdd()
     xfdd_tree = xfdd2_binarytree(xfdd)
     sa = xfdd_tree2_SA(xfdd_tree)
+    file = open("./SNAP_sa/SNAP_sa", "wb")
+    pickle.dump(sa, file)
+    file.close()
+
     sa.sa_str()
     draw_dfa(sa)

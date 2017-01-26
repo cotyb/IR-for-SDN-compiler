@@ -1,0 +1,22 @@
+digraph {
+    1
+    3
+    4
+    5
+    6
+    7
+    8
+    2
+        1 -> 4 [label=" (ip.src = 192.168.1.1 and ip.dst = 192.168.1.2 and tcp.dst = 80) FWD(a)"]
+        4 -> 3 [label="FWD(.) && dpi"]
+        1 -> 5 [label=" (ip.src = 192.168.1.1 and ip.dst = 192.168.1.2 and tcp.dst = 80) FWD(b)"]
+        5 -> 3 [label="FWD(.) && dpi"]
+        1 -> 1 [label="FWD(.)"]
+        2 -> 2 [label="FWD(.)"]
+        3 -> 6 [label="FWD(c)"]
+        6 -> 2 [label="FWD(.) && nat"]
+        3 -> 7 [label="FWD(d)"]
+        7 -> 2 [label="FWD(.) && nat"]
+        3 -> 3 [label="FWD(.)"]
+        2 -> 8 [label="FWD(e)"]
+}

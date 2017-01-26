@@ -2,6 +2,7 @@
 import SA
 import reg2_DFA
 import copy
+import pickle
 
 # Merlin abstract syntax: [s1;...;sn], fai
 # [ x : (ip.src = 192.168.1.1 and ip.dst = 192.168.1.2 and tcp.dst = 20) -> .* dpi .* ;
@@ -284,8 +285,14 @@ if __name__ == "__main__":
     z : (ip.src = 192.168.1.1 and ip.dst = 192.168.1.2 and tcp.dst = 80) -> .*dpi.*nat.* ],\
     max(x,50MB/s) and min(y,100MB/s)"
 
-
     statement, constraint = parser_policy(policy)
     all_sa = policy2_SA(statement, constraint)
+    num = 1
+    for sa in all_sa:
+        file = open("./Merlin_sa/Merlin_sa_"+str(num), "wb")
+        pickle.dump(sa, file)
+        file.close()
+        num += 1
+
     for i in range(len(all_sa)):
         all_sa[i].draw_sa(str(i))

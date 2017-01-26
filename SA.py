@@ -1,4 +1,5 @@
 #coding = utf-8
+from collections import defaultdict
 
 class SA(object):
     '''
@@ -7,12 +8,34 @@ class SA(object):
     edge is composed of two nodes, guard, action, update
     for all SA, node 1 is the start, node 2 is the end
     '''
-
     def __init__(self, start, end):
         self.start = start
         self.end = end
         self.edges = []
         self.nodes = [start, end]
+
+    def to_fsm(self):
+        alphabet = set()
+        states = set()
+        initial = 0
+        finals = set()
+        map = {}
+
+        initial = self.start.id
+        finals.add(self.end.id)
+        for node in self.nodes:
+            states.add(node.id)
+        for edge in self.edges:
+            alphabet.add(edge.action)
+            key, value = edge.start.id, {edge.action:{edge.end.id:[edge.guard, edge.update]}}
+            if key in map.keys():
+                tmp = map[key]
+                tmp[edge.action] = {edge.end.id:[edge.guard, edge.update]}
+            else:
+                map[key] = value
+
+        return alphabet, states, initial, finals, map
+
 
     def generate_node(self):
         new_node = Node(len(self.nodes) + 1)
