@@ -106,7 +106,7 @@ def policy2_SA(statement, constraint):
             start = SA.Node(dfa_nodes[0][0])
             end = SA.Node(dfa_nodes[-1][0])
             sa = SA.SA(start, end)
-            sa.nodes = [x[0] for x in dfa_nodes]
+            sa.nodes = [SA.Node(x[0]) for x in dfa_nodes]
 
 
             print dfa_edges
@@ -180,6 +180,7 @@ def policy2_SA(statement, constraint):
             sa.add_edge_indirect(end, sa.generate_node(), '', 'FWD(e)', '')
             all_sa.append(sa)
 
+
         # if the statement has rate constraint
         else:
             flag, rate = constraint[state_id][0], constraint[state_id][1]
@@ -200,7 +201,7 @@ def policy2_SA(statement, constraint):
             start = SA.Node(dfa_nodes[0][0])
             end = SA.Node(dfa_nodes[-1][0])
             sa = SA.SA(start, end)
-            sa.nodes = [x[0] for x in dfa_nodes]
+            sa.nodes = [SA.Node(x[0]) for x in dfa_nodes]
 
 
             print dfa_edges
@@ -275,6 +276,7 @@ def policy2_SA(statement, constraint):
             # add a edge to end
             sa.add_edge_indirect(end, sa.generate_node(), '', 'FWD(e)', '')
             all_sa.append(sa)
+
     return all_sa
 
 

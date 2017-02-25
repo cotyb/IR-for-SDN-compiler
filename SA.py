@@ -9,6 +9,8 @@ class SA(object):
     for all SA, node 1 is the start, node 2 is the end
     '''
     def __init__(self, start, end):
+        assert type(start) == Node
+        assert type(end) == Node
         self.start = start
         self.end = end
         self.edges = []
@@ -27,12 +29,25 @@ class SA(object):
             states.add(node.id)
         for edge in self.edges:
             alphabet.add(edge.action)
-            key, value = edge.start.id, {edge.action:{edge.end.id:[edge.guard, edge.update]}}
-            if key in map.keys():
-                tmp = map[key]
-                tmp[edge.action] = {edge.end.id:[edge.guard, edge.update]}
-            else:
+            key = edge.start.id
+            if key not in map:
+                value = {edge.action:{edge.end.id:[edge.guard, edge.update]}}
                 map[key] = value
+            else:
+                tmp = map[key]
+                if edge.action not in tmp:
+                    tmp[edge.action] = {edge.end.id:[edge.guard, edge.update]}
+                    map[key] = tmp
+                else:
+                    tmp = map[edge.start.id][edge.action]
+                    if edge.end.id not in tmp:
+                        tmp[edge.end.id] = [edge.guard, edge.update]
+                        map[edge.start.id][edge.action] = tmp
+                    else:
+                        tmp = map[edge.start.id][edge.action][edge.end.id]
+                        tmp.append(edge.guard)
+                        tmp.append(edge.update)
+                        map[edge.start.id][edge.action][edge.end.id] = tmp
 
         return alphabet, states, initial, finals, map
 
@@ -59,6 +74,11 @@ class SA(object):
 
 
     def draw_sa(self, file):
+        '''
+        show sa in graph, this function write the data to file
+        :param file:
+        :return: noting
+        '''
         file = open(file, "w")
         print >> file, "digraph {"
         for node in self.nodes:
