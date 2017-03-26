@@ -1,0 +1,20 @@
+digraph {
+    0
+    1
+        0 -> 0 [label=" and bw[s1][s2]>100MB/sFWD(.) and s1=s2, bw[s1][s2]-=rate, s2=rv(FWD)"]
+        0 -> 2 [label="bw[s1][s2]>100MB/sFWD(z)s1=s2, bw[s1][s2]-=rate, s2=rv(FWD)"]
+        0 -> 1 [label="dstip = 10.0.0.6/32 && (srcport = 53) && (srcip = 10.0.0.6/32) && (orphan[dstip,rdata] = (False,)) && (susp[dstip] = (4,)) FWD(e){[orphan[dstip,rdata] <- (True,) ; susp[dstip] <- 1 ; blacklist[dstip] <- (True,)]}"]
+        0 -> 1 [label="dstip = 10.0.0.6/32 && (srcport = 53) && (srcip = 10.0.0.6/32) && (orphan[dstip,rdata] = (False,)) && (susp[dstip] != (4,)) FWD(e){[orphan[dstip,rdata] <- (True,) ; susp[dstip] <- 1]}"]
+        0 -> 1 [label="dstip = 10.0.0.6/32 && (srcport = 53) && (srcip = 10.0.0.6/32) && (orphan[dstip,rdata] != (False,)) && (orphan[srcip,dstip] = (True,)) FWD(e){[orphan[srcip,dstip] <- (False,) ; susp[srcip] <- -1]}"]
+        0 -> 1 [label="dstip = 10.0.0.6/32 && (srcport = 53) && (srcip = 10.0.0.6/32) && (orphan[dstip,rdata] != (False,)) && (orphan[srcip,dstip] != (True,)) FWD(e){[id <- id]}"]
+        0 -> 1 [label="dstip = 10.0.0.6/32 && (srcport = 53) && (srcip != 10.0.0.6/32) && (orphan[dstip,rdata] = (False,)) && (susp[dstip] = (4,)) FWD(e){[orphan[dstip,rdata] <- (True,) ; susp[dstip] <- 1 ; blacklist[dstip] <- (True,)]}"]
+        0 -> 1 [label="dstip = 10.0.0.6/32 && (srcport = 53) && (srcip != 10.0.0.6/32) && (orphan[dstip,rdata] = (False,)) && (susp[dstip] != (4,)) FWD(e){[orphan[dstip,rdata] <- (True,) ; susp[dstip] <- 1]}"]
+        0 -> 1 [label="dstip = 10.0.0.6/32 && (srcport = 53) && (srcip != 10.0.0.6/32) && (orphan[dstip,rdata] != (False,)) FWD(e){[id <- id]}"]
+        0 -> 1 [label="dstip = 10.0.0.6/32 && (srcport != 53) && (srcip = 10.0.0.6/32) && (orphan[srcip,dstip] = (True,)) FWD(e){[orphan[srcip,dstip] <- (False,) ; susp[srcip] <- -1]}"]
+        0 -> 1 [label="dstip = 10.0.0.6/32 && (srcport != 53) && (srcip = 10.0.0.6/32) && (orphan[srcip,dstip] != (True,)) FWD(e){[id <- id]}"]
+        0 -> 1 [label="dstip = 10.0.0.6/32 && (srcport != 53) && (srcip != 10.0.0.6/32) FWD(e){[id <- id]}"]
+        0 -> 1 [label="dstip != 10.0.0.6/32 && (srcip = 10.0.0.6/32) && (orphan[srcip,dstip] = (True,)) FWD(e){[orphan[srcip,dstip] <- (False,) ; susp[srcip] <- -1]}"]
+        0 -> 1 [label="dstip != 10.0.0.6/32 && (srcip = 10.0.0.6/32) && (orphan[srcip,dstip] != (True,)) FWD(e){[id <- id]}"]
+        0 -> 1 [label="dstip != 10.0.0.6/32 && (srcip != 10.0.0.6/32) FWD(e){[id <- id]}"]
+        2 -> 2 [label="bw[s1][s2]>100MB/sFWD(.)s1=s2, bw[s1][s2]-=rate, s2=rv(FWD)"]
+}

@@ -24,7 +24,7 @@ def fsm2SA(fsm):
 
     # get all edges from fsm.map, and add edge into sa with function add_edge_indirect
     for edge_start, value1 in maps.items():
-        print value1
+        # print value1
         for edge_action, value2 in value1.items():
             for edge_end, value3 in value2.items():
                 # count denotes the number of (guard, update) tuple
@@ -52,8 +52,9 @@ if __name__ == "__main__":
     for file in files:
         Merlin_all_sa.append(load_pickle(Merlin_sa_path + file))
     SNAP_sa = load_pickle(SNAP_sa_path + "SNAP_sa")
+
     alphabet, states, initial, finals, map = SNAP_sa.to_fsm()
-    print alphabet, states, initial, finals, map
+    # print alphabet, states, initial, finals, map
     SNAP_fsm = fsm_2_17.fsm(alphabet=alphabet, states=states, initial=initial, finals=finals, map=map)
     Merlin_fsm = []
     for sa in Merlin_all_sa:
@@ -69,6 +70,7 @@ if __name__ == "__main__":
     result = SNAP_fsm.union(Merlin_merged_fsm)
     # change fsm to SA
     sa = fsm2SA(result)
+    sa.sa_str()
     sa.draw_sa("result")
 
 

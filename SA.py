@@ -16,6 +16,18 @@ class SA(object):
         self.edges = []
         self.nodes = [start, end]
 
+    def accepts(self, path):
+        '''
+        Test whether the SA accepts the given path
+        :param path: a list, like [a, b, c]
+        :return: True or False
+        '''
+        state = self.start.id
+        for sw in path:
+            pass
+
+
+
     def to_fsm(self):
         alphabet = set()
         states = set()

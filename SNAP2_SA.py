@@ -114,8 +114,8 @@ def Paths(root, result, path):
 
 
 def xfdd_tree2_SA(xfdd_tree):
-    start = SA.Node(1)
-    end = SA.Node(2)
+    start = SA.Node(0)
+    end = SA.Node(1)
     sa = SA.SA(start, end)
     sa.add_edge_indirect(start, start, "", "FWD(.)", "")
     all_path = binary_tree_paths(xfdd_tree)
@@ -127,8 +127,8 @@ def xfdd_tree2_SA(xfdd_tree):
 
 def draw_dfa(sa, filename="xfdd_sa"):
     g = gv.Digraph(format="pdf")
-    g.node(str(1), color="red")
-    g.node(str(2), color="blue")
+    g.node(str(0), color="red")
+    g.node(str(1), color="blue")
 
     for edge in sa.edges:
         g.edge(str(edge.start.id), str(edge.end.id), label=edge.guard + edge.action + edge.update)

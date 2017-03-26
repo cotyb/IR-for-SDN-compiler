@@ -1,6 +1,11 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
+
+SNAP_network_match_fields = ["srcip", "dstip", "srcport", "dstport"]
+Merlin_network_match_fields = ["ip.src", "ip.dst", "tcp.dst", "tcp.src"]
+
+
 def construct_graph(file):
     file = open(file, "r")
     node_name = {}
@@ -19,6 +24,16 @@ def construct_graph(file):
     return graph
 
 def construct_traffic_req(file):
+    pass
+
+
+def is_path_meet_sa(sa, path):
+    '''
+    given a path and a sa, verify whether the path meets the sa
+    :param sa: sa, SA objetc
+    :param path: a list, like [1,2,3]
+    :return: false or true
+    '''
     pass
 
 if __name__ == "__main__":

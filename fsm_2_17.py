@@ -1071,6 +1071,7 @@ if __name__ == "__main__":
 
 	print a.union(b)
 	print c.union(d)
+
 	
 
 	#a，b相并

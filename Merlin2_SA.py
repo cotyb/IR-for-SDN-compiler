@@ -291,6 +291,7 @@ if __name__ == "__main__":
     all_sa = policy2_SA(statement, constraint)
     num = 1
     for sa in all_sa:
+        sa.sa_str()
         file = open("./Merlin_sa/Merlin_sa_"+str(num), "wb")
         pickle.dump(sa, file)
         file.close()
