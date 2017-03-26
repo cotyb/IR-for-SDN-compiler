@@ -1,5 +1,6 @@
 #coding = utf-8
 from collections import defaultdict
+import re
 
 class SA(object):
     '''
@@ -16,15 +17,48 @@ class SA(object):
         self.edges = []
         self.nodes = [start, end]
 
+    def change_end_node(self, new_end_node):
+        self.end = new_end_node
+
     def accepts(self, path):
         '''
         Test whether the SA accepts the given path
         :param path: a list, like [a, b, c]
         :return: True or False
         '''
-        state = self.start.id
-        for sw in path:
-            pass
+        if len(path) == 0:
+            return False
+        pattern = re.compile('FWD\\((.)\\)')
+        state = self.start
+        for edge in self.edges:
+            if edge.start == state:
+                to_sw = re.match(pattern, edge.action).expand(r'\1')
+                if to_sw == '.':
+                    return self.match(path[1:], edge.end)
+                elif to_sw == path[0]:
+                    return self.match(path[1:], edge.end)
+                else:
+                    continue
+        return False
+
+
+    def match(self, path, state):
+        pattern = re.compile('FWD\\((.)\\)')
+        if len(path) == 0:
+            for edge in self.edges:
+                if state == edge.start and edge.end == self.end:
+                    return True
+            return False
+        else:
+            for edge in self.edges:
+                if state == edge.start:
+                    to_sw = re.match(pattern, edge.action).expand(r'\1')
+                    if to_sw == '.':
+                        return self.match(path[1:], edge.end)
+                    elif to_sw == path[0]:
+                        return self.match(path[1:], edge.end)
+                    else:
+                        continue
 
 
 
