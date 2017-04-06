@@ -3,6 +3,7 @@ from collections import defaultdict
 from cfg import header_field
 from cfg import header_field_1
 import re
+import copy
 
 
 class SA(object):
@@ -27,6 +28,7 @@ class SA(object):
         '''
         divide sa into many sub-sa according to traffic
         :return: result, {flag: sa} flag denotes specific traffic
+        flag is a string : "srcip = xxx, dstip = xxx"
         '''
         result = {}
         initial_node = self.start.id
@@ -37,6 +39,19 @@ class SA(object):
                 edges_begin_with_sa_start.append(edge)
 
         while len(edges_begin_with_sa_start) > 0:
+            no_conflict = []
+            to_sub = []
+            for edge in self.edges:
+                if edge.extract_traffic_info() == '':
+                    no_conflict.append(edge)
+                    to_sub.append(edge)
+                    continue
+                else:
+                    flag = edge.extract_traffic_info()
+                    sa = copy.deepcopy(self)
+                    sa.clear_edges()
+
+
 
 
 
@@ -130,6 +145,15 @@ class SA(object):
         if edge not in self.edges:
             self.edges.append(edge)
 
+    def clear_edges(self):
+        self.edges = []
+
+    def sa_backup(self):
+        start = self.start
+        end = self.end
+        self.edges = []
+        self.nodes = [start, end]
+
     def add_edge_indirect(self, edge_start, edge_end, guard, action, update):
         for i in range(len(header_field_1)):
             if guard.__contains__(header_field_1[i]):
@@ -220,7 +244,16 @@ class Edge(object):
             setattr(self, f, v)
 
     def extract_traffic_info(self):
-        
+        flag = ''
+        for field in header_field:
+            if self.guard.__contains__(field):
+                field_value_1 = self.guard[self.guard.find(field):]
+                value_1 = field_value_1[field_value_1.find(field):field_value_1.find(' ',len(field)+3)]
+                flag += value_1 + ',' + ' '
+        if len(flag) > 0:
+            return flag[:-2]
+        return flag
+
 
     def conflicts(self, edge):
         '''
@@ -256,8 +289,3 @@ class Node(object):
 
     def __eq__(self, other):
         return self.id == other.id
-
-
-
-
-
