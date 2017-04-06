@@ -142,5 +142,9 @@ if __name__ == "__main__":
     pickle.dump(sa, file)
     file.close()
 
-    sa.sa_str()
+    # sa.sa_str()
+    xx = sa.divide_sa()
+    for hh in xx:
+        print hh
+        print xx[hh].sa_str()
     draw_dfa(sa)

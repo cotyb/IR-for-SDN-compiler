@@ -34,28 +34,37 @@ class SA(object):
         initial_node = self.start.id
         # the traffic information only appears in the first two nodes
         edges_begin_with_sa_start = []
+        edges_begin_not_with_sa_start = []
+        no_traffic_info = []
         for edge in self.edges:
             if edge.start.id == self.start.id:
-                edges_begin_with_sa_start.append(edge)
+                if edge.extract_traffic_info() == '':
+                    no_traffic_info.append(edge)
+                else:
+                    edges_begin_with_sa_start.append(edge)
+        edges_begin_not_with_sa_start = list(set(self.edges) - set(edges_begin_with_sa_start))
+        if edges_begin_with_sa_start == []:
+            result[''] = self
 
         while len(edges_begin_with_sa_start) > 0:
-            no_conflict = []
-            to_sub = []
-            for edge in self.edges:
-                if edge.extract_traffic_info() == '':
-                    no_conflict.append(edge)
-                    to_sub.append(edge)
-                    continue
+            first_edge = edges_begin_with_sa_start[0]
+            flag = first_edge.extract_traffic_info()
+            this_sa_edges = [first_edge]
+            other_sa_edges = []
+            for edge in edges_begin_with_sa_start[1:]:
+                if first_edge.conflicts(edge):
+                    other_sa_edges.append(edge)
                 else:
-                    flag = edge.extract_traffic_info()
-                    sa = copy.deepcopy(self)
-                    sa.clear_edges()
-
-
-
-
-
-
+                    this_sa_edges.append(edge)
+            edges_begin_with_sa_start = list(set(edges_begin_with_sa_start) - set(this_sa_edges))
+            new_sa = copy.deepcopy(self)
+            new_sa.clear_edges()
+            for edge in this_sa_edges:
+                new_sa.add_edge_direct(edge)
+            for edge in edges_begin_not_with_sa_start:
+                new_sa.add_edge_direct(edge)
+            result[flag] = new_sa
+        return result
 
 
     def accepts(self, path):
@@ -248,7 +257,7 @@ class Edge(object):
         for field in header_field:
             if self.guard.__contains__(field):
                 field_value_1 = self.guard[self.guard.find(field):]
-                value_1 = field_value_1[field_value_1.find(field):field_value_1.find(' ',len(field)+3)]
+                value_1 = field_value_1[field_value_1.find(field):field_value_1.find(' ',len(field)+4)]
                 flag += value_1 + ',' + ' '
         if len(flag) > 0:
             return flag[:-2]
@@ -259,7 +268,7 @@ class Edge(object):
         '''
         for back end, test whether two edges are conflicted
         :param edge: an edge
-        :return: True or False
+        :return: True if conflicts, False if not conflicts
         '''
         for field in header_field:
             if self.guard.__contains__(field) and edge.guard.__contains__(field):

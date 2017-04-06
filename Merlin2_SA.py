@@ -296,6 +296,7 @@ if __name__ == "__main__":
     num = 1
     all_sa[1].sa_str()
     print all_sa[1].accepts(['a','c','d','e'])
+    print all_sa[1].divide_sa()
     print all_sa[1].end.id
     for sa in all_sa:
         # sa.sa_str()
