@@ -29,9 +29,10 @@ def statement2_dict(statement):
     result = {}
     statement = statement.strip("[ ]")
     stetements = statement.split(";")
-    for stete in stetements:
-        key, value = stete.split(":")
+    for state in stetements:
+        key, value = state.split(":")
         predict, functions = value.split("->")
+        predict = predict.strip(' ()').replace("and", "&&")
         result[key.strip()] = (predict, functions)
     return result
 
@@ -218,7 +219,8 @@ def policy2_SA(statement, constraint):
                         update = 's1=s2, bw[s1][s2]-=rate, s2=rv(FWD)'
                         sa.add_edge_indirect(sa_edge_start, sa_edge_start, guard, "FWD(.)", update)
                     elif edge[2] in switch_fun.keys():
-                        guard = predict + ' && ' + 'bw[s1][s2]<%s' %(rate) if flag == 'max' else 'bw[s1][s2]>%s' %(rate)
+                        fix_tmp = 'bw[s1][s2]<%s' %(rate) if flag == 'max' else 'bw[s1][s2]>%s' %(rate)
+                        guard = predict + ' && ' + fix_tmp
                         new_node = sa.generate_node()
                         # action = 'FWD(%s)' %new_node.id
                         action = 'FWD(%s)' %edge[2]
@@ -227,7 +229,9 @@ def policy2_SA(statement, constraint):
                         sa.add_edge_direct(sa_edge)
                         new_edge_start = new_node
                         new_edge_end = sa_edge_end
-                        guard = fun_guard_update[switch_fun[edge[2]]][0] + ' && ' + 'bw[s1][s2]<%s' %(rate) if flag == 'max' else 'bw[s1][s2]>%s' %(rate)
+                        fix_tmp = 'bw[s1][s2]<%s' %(rate) if flag == 'max' else 'bw[s1][s2]>%s' %(rate)
+                        guard = fun_guard_update[switch_fun[edge[2]]][0] + ' && ' + fix_tmp if \
+                            len(fun_guard_update[switch_fun[edge[2]]][0].strip())>0 else fix_tmp
                         # action = "FW(%s)" %(new_edge_end.id) + " && " + switch_fun[edge[2]]
                         action = "FWD(.)"  + " && " + switch_fun[edge[2]]
                         if fun_guard_update[switch_fun[edge[2]]][1] == '':
@@ -237,7 +241,8 @@ def policy2_SA(statement, constraint):
                                      's1=s2, bw[s1][s2]-=rate, s2=rv(FWD)'
                         sa.add_edge_indirect(new_edge_start, new_edge_end, guard, action, update)
                     else:
-                        guard = predict + ' && ' + 'bw[s1][s2]<%s' %(rate) if flag == 'max' else 'bw[s1][s2]>%s' %(rate)
+                        fix_tmp = 'bw[s1][s2]<%s' %(rate) if flag == 'max' else 'bw[s1][s2]>%s' %(rate)
+                        guard = predict + ' && ' + fix_tmp
                         action = 'FWD(%s)' %edge[2]
                         update = 's1=s2, bw[s1][s2]-=rate, s2=rv(FWD)'
                         sa_edge = SA.Edge(sa_edge_start, sa_edge_end, guard, action, update)
@@ -259,7 +264,9 @@ def policy2_SA(statement, constraint):
                         sa.add_edge_direct(sa_edge)
                         new_edge_start = new_node
                         new_edge_end = sa_edge_end
-                        guard = fun_guard_update[switch_fun[edge[2]]][0] + ' && ' + 'bw[s1][s2]<%s' %(rate) if flag == 'max' else 'bw[s1][s2]>%s' %(rate)
+                        fix_tmp = 'bw[s1][s2]<%s' %(rate) if flag == 'max' else 'bw[s1][s2]>%s' %(rate)
+                        guard = fun_guard_update[switch_fun[edge[2]]][0] + ' && ' + fix_tmp if \
+                            len(fun_guard_update[switch_fun[edge[2]]][0].strip())>0 else fix_tmp
                         # action = "FW(%s)" %(new_edge_end.id) + " && " + switch_fun[edge[2]]
                         action = "FWD(.)" + " && " + switch_fun[edge[2]]
                         if fun_guard_update[switch_fun[edge[2]]][1] == '':
@@ -286,18 +293,18 @@ def policy2_SA(statement, constraint):
 
 
 if __name__ == "__main__":
-    policy ="[ x : (ip.src = 192.168.1.1 and ip.dst = 192.168.1.2 and tcp.dst = 20) -> .*dpi.*;\
-    y : (ip.src = 192.168.1.1 and ip.dst = 192.168.1.2 and tcp.dst = 21) -> .*z.*;\
-    z : (ip.src = 192.168.1.1 and ip.dst = 192.168.1.2 and tcp.dst = 80) -> .*dpi.*nat.* ],\
+    policy ="[ x : (ip.src = '192.168.1.1' and ip.dst = '192.168.1.2' and tcp.dst = 20) -> .*dpi.*;\
+    y : (ip.src = '192.168.1.1' and ip.dst = '192.168.1.2' and tcp.dst = 21) -> .*z.*;\
+    z : (ip.src = '192.168.1.1' and ip.dst = '192.168.1.2' and tcp.dst = 80) -> .*dpi.*nat.*],\
     max(x,50MB/s) and min(y,100MB/s)"
 
     statement, constraint = parser_policy(policy)
     all_sa = policy2_SA(statement, constraint)
     num = 1
     all_sa[1].sa_str()
-    print all_sa[1].accepts(['a','c','d','e'])
-    print all_sa[1].divide_sa()
-    print all_sa[1].end.id
+    # print all_sa[1].accepts(['a','c','d','e'])
+    print all_sa[0].divide_sa().values()[0].sa_str()
+    # print all_sa[1].end.id
     for sa in all_sa:
         # sa.sa_str()
         file = open("./Merlin_sa/Merlin_sa_"+str(num), "wb")

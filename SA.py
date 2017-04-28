@@ -1,4 +1,9 @@
 #coding = utf-8
+'''
+edge: start, guard, action, update, end
+guard: &&
+update {[update1; update2; ...]}
+'''
 from collections import defaultdict
 from cfg import header_field
 from cfg import header_field_1
@@ -20,6 +25,15 @@ class SA(object):
         self.end = end
         self.edges = []
         self.nodes = [start, end]
+        self.state_configuration = {}
+
+    def add_state_configuration(self, key, value):
+        self.state_configuration[key] = value
+
+    def update_state_configuration(self, key, value):
+        if key in self.state_configuration:
+            self.state_configuration[key] = value
+            
 
     def change_end_node(self, new_end_node):
         self.end = new_end_node
@@ -107,6 +121,53 @@ class SA(object):
                     else:
                         continue
 
+    def accepts_with_state(self, path):
+        '''
+        Test whether the SA accepts the given path
+        :param path: a list, like [a, b, c]
+        :return: True or False
+        '''
+        if len(path) == 0:
+            return False
+        pattern = re.compile('FWD\\((.)\\)')
+        state = self.start
+        for edge in self.edges:
+            if edge.start == state:
+                guard = edge.guard
+                guards = guard.split("&&")
+                for guard in guards:
+                    if len(guard.strip()) == 0:
+                        continue
+                    elif guard.__contains__("bw[s1][s2]"):
+                        continue
+                    eval(guard)
+                to_sw = re.match(pattern, edge.action).expand(r'\1')
+                if to_sw == '.':
+                    return self.match_with_state(path[1:], edge.end)
+                elif to_sw == path[0]:
+                    return self.match_with_state(path[1:], edge.end)
+                else:
+                    continue
+        return False
+
+
+    def match_with_state(self, path, state):
+        pattern = re.compile('FWD\\((.)\\)')
+        if len(path) == 0:
+            for edge in self.edges:
+                if state == edge.start and edge.end == self.end:
+                    return True
+            return False
+        else:
+            for edge in self.edges:
+                if state == edge.start:
+                    to_sw = re.match(pattern, edge.action).expand(r'\1')
+                    if to_sw == '.':
+                        return self.match(path[1:], edge.end)
+                    elif to_sw == path[0]:
+                        return self.match(path[1:], edge.end)
+                    else:
+                        continue
 
 
     def to_fsm(self):

@@ -59,6 +59,10 @@ def SNAP_policy2_xfdd():
     # policy = policies.get_ftp_monitoring_policy(ports)
     assumption = policies.get_route_and_assump_policy(ports)[1]
     xfdd = stateful.compile_to_xfdd(policy, assumption, ports)
+    print "=====xfdd======="
+    print xfdd
+    print "=====xfdd======="
+
     return xfdd
 
 
@@ -115,14 +119,17 @@ def Paths(root, result, path):
 
 def xfdd_tree2_SA(xfdd_tree):
     start = SA.Node(0)
-    end = SA.Node(1)
+    tmp_node = SA.Node(1)
+    end = SA.Node(2)
     sa = SA.SA(start, end)
     sa.add_edge_indirect(start, start, "", "FWD(.)", "")
+    sa.add_edge_indirect(tmp_node, tmp_node, "", "FWD(.)", "")
+    sa.add_edge_indirect(tmp_node, end, "", "FWD(e)", "")
     all_path = binary_tree_paths(xfdd_tree)
-    action = "FWD(e)"
+    action = "FWD(.)"
     for path in all_path:
         guard, update = path.split("&& |||")
-        sa.add_edge_indirect(start, end, guard, action, update)
+        sa.add_edge_indirect(start, tmp_node, guard, action, update)
     return sa
 
 def draw_dfa(sa, filename="xfdd_sa"):
@@ -142,9 +149,9 @@ if __name__ == "__main__":
     pickle.dump(sa, file)
     file.close()
 
-    # sa.sa_str()
-    xx = sa.divide_sa()
-    for hh in xx:
-        print hh
-        print xx[hh].sa_str()
+    sa.sa_str()
+    # xx = sa.divide_sa()
+    # for hh in xx:
+    #     print hh
+    #     print xx[hh].sa_str()
     draw_dfa(sa)

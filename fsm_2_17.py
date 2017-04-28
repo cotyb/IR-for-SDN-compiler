@@ -1013,7 +1013,6 @@ if __name__ == "__main__":
 				1: {'FWD(.)': {1: ['bw[s1][s2]>100MB/s', 's1=s2, bw[s1][s2]-=rate, s2=rv(FWD)']}, 
 				'FWD(z)': {2: ['bw[s1][s2]>100MB/s', 's1=s2, bw[s1][s2]-=rate, s2=rv(FWD)']}},
 				2: {'FWD(.)': {2: ['bw[s1][s2]>100MB/s', 's1=s2, bw[s1][s2]-=rate, s2=rv(FWD)']}, 'FWD(e)': {3: ['', '']},}
-				
 			},
 		)
 	b = fsm(
