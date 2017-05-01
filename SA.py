@@ -156,7 +156,7 @@ class SA(object):
                         meet_guard = False
                 if not meet_guard:
                     continue
-                old_state = state
+                old_state = copy.deepcopy(state)
                 update = edge.update
                 updates = update.split(';')
                 for ud in updates:
