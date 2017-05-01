@@ -22,8 +22,8 @@ sa.add_edge_indirect(SA.Node(1),SA.Node(2)," srcip='192.168.1.2' && dstip='192.1
 sa.add_edge_indirect(SA.Node(3),SA.Node(4),"",'FWD(.) && dpi','')
 sa.add_edge_indirect(SA.Node(2),SA.Node(5),"",'FWD(e)','')
 sa.add_edge_indirect(SA.Node(2),SA.Node(2),"",'FWD(.)','')
-sa.add_edge_indirect(SA.Node(4),SA.Node(4),"h<1",'FWD(.)','h+=1')
-sa.add_edge_indirect(SA.Node(4),SA.Node(5),"h<1",'FWD(e)','')
+sa.add_edge_indirect(SA.Node(4),SA.Node(4),"h<2",'FWD(.)','h+=1')
+sa.add_edge_indirect(SA.Node(4),SA.Node(5),"h<2",'FWD(e)','')
 sa.add_state_configuration('h',0)
 
 
@@ -37,7 +37,7 @@ sub_sa_2.sa_str()
 
 count = 0
 for path in all_path:
-    if sub_sa_1.accepts_with_state(path, sub_sa_1.start, sub_sa_1.state_configuration):
+    if sub_sa_2.accepts_with_state(path, sub_sa_2.start, sub_sa_2.state_configuration):
         count += 1
         print path
 print count
