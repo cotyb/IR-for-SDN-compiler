@@ -2,7 +2,7 @@
 '''
 edge: start, guard, action, update, end
 guard: &&
-update {[update1; update2; ...]}
+update update1; update2; ...
 '''
 from collections import defaultdict
 from cfg import header_field
@@ -31,9 +31,7 @@ class SA(object):
         self.state_configuration[key] = value
 
     def update_state_configuration(self, key, value):
-        if key in self.state_configuration:
-            self.state_configuration[key] = value
-            
+        self.state_configuration[key] = value
 
     def change_end_node(self, new_end_node):
         self.end = new_end_node
@@ -121,54 +119,62 @@ class SA(object):
                     else:
                         continue
 
-    def accepts_with_state(self, path):
+    def accepts_with_state(self, path, start, state):
         '''
         Test whether the SA accepts the given path
+        the initial call format is accepts_with_state(path, self.start, self.state)
         :param path: a list, like [a, b, c]
+        :param start: the start of current, it's a node of SA
+        :param state: the initial state configuration, like {h:0}
         :return: True or False
         '''
         if len(path) == 0:
+            for edge in self.edges:
+                if start == edge.start and edge.end == self.end:
+                    return True
             return False
         pattern = re.compile('FWD\\((.)\\)')
-        state = self.start
         for edge in self.edges:
-            if edge.start == state:
+            for key in state:
+                exec(key+'='+str(state[key]))
+            if edge.start == start:
+                meet_guard = True
                 guard = edge.guard
                 guards = guard.split("&&")
                 for guard in guards:
+                    guard = guard.strip()
                     if len(guard.strip()) == 0:
                         continue
-                    elif guard.__contains__("bw[s1][s2]"):
+                    if reduce(lambda x,y:x or y,[pkt_hearder in guard for pkt_hearder in header_field]):
+                        exec(guard)
                         continue
-                    eval(guard)
+                    if guard.__contains__("bw[s1][s2]"):
+                        continue
+                    if eval(guard):
+                        continue
+                    else:
+                        meet_guard = False
+                if not meet_guard:
+                    continue
+                old_state = state
+                update = edge.update
+                updates = update.split(';')
+                for ud in updates:
+                    ud = ud.replace('++','+=1').replace('--','-=1')
+                    if ud.__contains__('s1=s2, bw[s1][s2]-=rate'):
+                        continue
+                    exec(update)
+                for key in state:
+                    if eval(key+'!='+str(state[key])):
+                        state[key] = eval(key)
                 to_sw = re.match(pattern, edge.action).expand(r'\1')
                 if to_sw == '.':
-                    return self.match_with_state(path[1:], edge.end)
+                    return self.accepts_with_state(path[1:], edge.end, state)
                 elif to_sw == path[0]:
-                    return self.match_with_state(path[1:], edge.end)
+                    return self.accepts_with_state(path[1:], edge.end, state)
                 else:
+                    state = old_state
                     continue
-        return False
-
-
-    def match_with_state(self, path, state):
-        pattern = re.compile('FWD\\((.)\\)')
-        if len(path) == 0:
-            for edge in self.edges:
-                if state == edge.start and edge.end == self.end:
-                    return True
-            return False
-        else:
-            for edge in self.edges:
-                if state == edge.start:
-                    to_sw = re.match(pattern, edge.action).expand(r'\1')
-                    if to_sw == '.':
-                        return self.match(path[1:], edge.end)
-                    elif to_sw == path[0]:
-                        return self.match(path[1:], edge.end)
-                    else:
-                        continue
-
 
     def to_fsm(self):
         alphabet = set()
