@@ -32,8 +32,10 @@ def test():
         sa = SNAP2_SA.xfdd_tree2_SA(xfdd_tree)
 
         using_time = time.time() - t_s
-        plt.scatter(i,using_time)
-        # plt.plot(x, using_time)
+        plt.bar(i,using_time, color='r')
+
+    plt.xlim(0,21)
+    plt.ylim(0,0.15)
     plt.show()
 
 test()
