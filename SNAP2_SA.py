@@ -59,9 +59,9 @@ def SNAP_policy2_xfdd():
     # policy = policies.get_ftp_monitoring_policy(ports)
     assumption = policies.get_route_and_assump_policy(ports)[1]
     xfdd = stateful.compile_to_xfdd(policy, assumption, ports)
-    print "=====xfdd======="
-    print xfdd
-    print "=====xfdd======="
+    # print "=====xfdd======="
+    # print xfdd
+    # print "=====xfdd======="
 
     return xfdd
 
