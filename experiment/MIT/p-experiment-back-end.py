@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+import numpy as np
+
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 import SA
 import networkx as nx
@@ -24,14 +29,38 @@ def draw_3d(x, y, z):
     ax=plt.subplot(111,projection='3d') #创建一个三维的绘图工程
 
     #将数据点分成三部分画，在颜色上有区分度
-    ax.scatter(x[:1000],y[:1000],z[:1000],c='y') #绘制数据点
-    ax.scatter(x[1000:4000],y[1000:4000],z[1000:4000],c='r')
-    ax.scatter(x[4000:],y[4000:],z[4000:],c='g')
+    ax.scatter(x,y,z,c='b') #绘制数据点
+    # ax.scatter(x[1000:4000],y[1000:4000],z[1000:4000],c='r')
+    # ax.scatter(x[4000:],y[4000:],z[4000:],c='g')
 
-    ax.set_zlabel('Time/s') #坐标轴
-    ax.set_ylabel('Ingress switch')
-    ax.set_xlabel('Egress switch')
+    ax.set_zlabel('时间/s', fontsize='large') #坐标轴
+    ax.set_ylabel('入口交换机', fontsize='large')
+    ax.set_xlabel('出口交换机', fontsize='large')
     plt.show()
+
+
+def draw_2d(a, b, x_lable, y_lable="时间/s"):
+    # x = np.linspace(1, 101)
+    # y = np.linspace(0, 0.1)
+    plt.style.use('ggplot')
+    plt.xlabel(x_lable, fontsize='x-large')
+    plt.ylabel(y_lable, fontsize='x-large')
+    # plt.title("Time and the num of Merlin statements")
+
+    plt.scatter(a, b, s=50)
+    # plt.plot(x, using_time)
+    # plt.ylim(-0.02, 0.1)
+    plt.show()
+
+file = open("result.txt","r")
+x,y,z = file.readlines()
+x = eval(x)
+y = eval(y)
+z = eval(z)
+draw_3d(x, y, z)
+draw_2d(x, z, "入口交换机")
+draw_2d(y, z, "出口交换机")
+draw_2d(x, y, "入口交换机", "出口交换机")
 # construct topology and compute all simple path
 # topo = nx.Graph()
 # topo.add_edges_from([('i','a'),('i','c'),('i','b'),('a','d'),('a','z'),('c','z'),('b','z'),('b','f'),('z','d'),('z','j'),('z','f'),('d','g'),('j','g'),('f','g')])
@@ -53,8 +82,35 @@ def draw_3d(x, y, z):
 def draw_topo(topo):
     pos = nx.spring_layout(topo)
     plt.figure()
-    nx.draw(topo, pos,with_labels=True)
+    nx.draw(topo, pos, node_color='b', with_labels=False)
     plt.show()
+
+topo_file = open("topo.txt","r")
+topo = construct_topo_from_snap_topo(topo_file)
+draw_topo(topo)
+
+# def draw_2d(a, b, x_lable, y_lable="时间/s"):
+#     x = np.linspace(1, 101)
+#     y = np.linspace(0, 0.1)
+#     plt.style.use('ggplot')
+#     plt.xlabel(x_lable)
+#     plt.ylabel(y_lable)
+#     # plt.title("Time and the num of Merlin statements")
+#
+#     plt.scatter(a, b, s=50)
+#     # plt.plot(x, using_time)
+#     # plt.ylim(-0.02, 0.1)
+#     plt.show()
+#
+# file = open("result.txt","r")
+# x,y,z = file.readlines()
+# x = eval(x)
+# y = eval(y)
+# z = eval(z)
+# draw_3d(x, y, z)
+# draw_2d(x, z, "入口交换机")
+# draw_2d(y, z, "出口交换机")
+# draw_2d(x, y, "入口交换机", "出口交换机")
 
 # construct sa
 def construct_sa():
@@ -161,6 +217,8 @@ def mip(sa_path, topo, sa_resource):
     return m, R
 
 def test():
+    result = open("result.txt", "w")
+    result.truncate()
     X, Y, Z = [], [], []
     topo_file = open("topo.txt","r")
     topo = construct_topo_from_snap_topo(topo_file)
@@ -187,9 +245,12 @@ def test():
             Z.append(1.0*using_time)
 
     X, Y = [int(x) for x in X],[int(y) for y in Y]
-    print X, Y, Z
+    print >> result, X
+    print >> result, Y
+    print >> result, Z
+    result.close()
     draw_3d(X, Y, Z)
 
-test()
+# test()
 
 

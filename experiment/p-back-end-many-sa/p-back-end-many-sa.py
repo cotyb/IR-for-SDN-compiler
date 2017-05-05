@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import numpy as np
+
 import SA
 import networkx as nx
 from gurobipy import *
@@ -8,6 +8,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import time
 import random
+import numpy as np
 
 import sys
 reload(sys)
@@ -26,38 +27,14 @@ def draw_3d(x, y, z):
     ax=plt.subplot(111,projection='3d') #创建一个三维的绘图工程
 
     #将数据点分成三部分画，在颜色上有区分度
-    ax.scatter(x,y,z,c='b') #绘制数据点
+    ax.scatter(x, y, z,c='b') #绘制数据点
     # ax.scatter(x[1000:4000],y[1000:4000],z[1000:4000],c='r')
     # ax.scatter(x[4000:],y[4000:],z[4000:],c='g')
 
-    ax.set_zlabel('时间/s', fontsize='large') #坐标轴
-    ax.set_ylabel('入口交换机', fontsize='large')
-    ax.set_xlabel('出口交换机', fontsize='large')
+    ax.set_zlabel('Time/s') #坐标轴
+    ax.set_ylabel('Ingress switch')
+    ax.set_xlabel('Egress switch')
     plt.show()
-
-
-def draw_2d(a, b, x_lable, y_lable="时间/s"):
-    # x = np.linspace(1, 101)
-    # y = np.linspace(0, 0.1)
-    plt.style.use('ggplot')
-    plt.xlabel(x_lable, fontsize='x-large')
-    plt.ylabel(y_lable, fontsize='x-large')
-    # plt.title("Time and the num of Merlin statements")
-
-    plt.scatter(a, b, s=50)
-    # plt.plot(x, using_time)
-    # plt.ylim(-0.02, 0.1)
-    plt.show()
-
-file = open("result.txt","r")
-x,y,z = file.readlines()
-x = eval(x)
-y = eval(y)
-z = eval(z)
-draw_3d(x, y, z)
-draw_2d(x, z, "入口交换机")
-draw_2d(y, z, "出口交换机")
-draw_2d(x, y, "入口交换机", "出口交换机")
 # construct topology and compute all simple path
 # topo = nx.Graph()
 # topo.add_edges_from([('i','a'),('i','c'),('i','b'),('a','d'),('a','z'),('c','z'),('b','z'),('b','f'),('z','d'),('z','j'),('z','f'),('d','g'),('j','g'),('f','g')])
@@ -79,60 +56,55 @@ draw_2d(x, y, "入口交换机", "出口交换机")
 def draw_topo(topo):
     pos = nx.spring_layout(topo)
     plt.figure()
-    nx.draw(topo, pos, node_color='b', with_labels=False)
+    nx.draw(topo, pos,with_labels=True)
     plt.show()
-#
-# def draw_2d(a, b, x_lable, y_lable="时间/s"):
-#     x = np.linspace(1, 101)
-#     y = np.linspace(0, 0.1)
-#     plt.style.use('ggplot')
-#     plt.xlabel(x_lable)
-#     plt.ylabel(y_lable)
-#     # plt.title("Time and the num of Merlin statements")
-#
-#     plt.scatter(a, b, s=50)
-#     # plt.plot(x, using_time)
-#     # plt.ylim(-0.02, 0.1)
-#     plt.show()
-#
-# file = open("result.txt","r")
-# x,y,z = file.readlines()
-# x = eval(x)
-# y = eval(y)
-# z = eval(z)
-# draw_3d(x, y, z)
-# draw_2d(x, z, "入口交换机")
-# draw_2d(y, z, "出口交换机")
-# draw_2d(x, y, "入口交换机", "出口交换机")
 
-# construct sa
+def last_two_edge(sa, count_1, count_2):
+    # sa.add_edge_indirect(SA.Node(1),SA.Node(count_2)," srcip='192.168.1.2' && dstip='192.168.1.3' ",'FWD(21)','')
+    # sa.add_edge_indirect(SA.Node(count_1),SA.Node(4),"",'FWD(.) && dpi','')
+    edge1 = SA.Edge(SA.Node(1),SA.Node(count_2)," srcip='192.168.1.2' && dstip='192.168.1.3' ",'FWD(21)','')
+    sa.add_edge_direct(edge1)
+    edge2 = SA.Edge(SA.Node(count_1),SA.Node(4),"",'FWD(.) && dpi','')
+    sa.add_edge_direct(edge2)
+
+    return sa, edge1, edge2
+
 def construct_sa():
     sa = SA.SA(SA.Node(1),SA.Node(5))
     sa.add_edge_indirect(SA.Node(1),SA.Node(1),'','FWD(.)','')
-    sa.add_edge_indirect(SA.Node(1),SA.Node(3)," srcip='192.168.1.1' && dstip='192.168.1.3' ",'FWD(201)','')
-    sa.add_edge_indirect(SA.Node(1),SA.Node(3)," srcip='192.168.1.1' && dstip='192.168.1.3' ",'FWD(2)','')
-    sa.add_edge_indirect(SA.Node(1),SA.Node(2)," srcip='192.168.1.2' && dstip='192.168.1.3' ",'FWD(202)','')
-    sa.add_edge_indirect(SA.Node(3),SA.Node(4),"",'FWD(.) && dpi','')
+    sa.add_edge_indirect(SA.Node(1),SA.Node(3)," srcip='192.168.1.1' && dstip='192.168.1.3' ",'FWD(19)','')
+    sa.add_edge_indirect(SA.Node(1),SA.Node(3)," srcip='192.168.1.1' && dstip='192.168.1.3' ",'FWD(20)','')
+    # sa.add_edge_indirect(SA.Node(1),SA.Node(2)," srcip='192.168.1.2' && dstip='192.168.1.3' ",'FWD(21)','')
+    # sa.add_edge_indirect(SA.Node(3),SA.Node(4),"",'FWD(.) && dpi','')
+
     sa.add_edge_indirect(SA.Node(2),SA.Node(5),"",'FWD(e)','')
     sa.add_edge_indirect(SA.Node(2),SA.Node(2),"",'FWD(.)','')
     sa.add_edge_indirect(SA.Node(4),SA.Node(4),"h<3",'FWD(.)','h+=1')
     sa.add_edge_indirect(SA.Node(4),SA.Node(5),"h<3",'FWD(e)','')
     sa.add_state_configuration('h',0)
+    sa.add_edge_indirect(SA.Node(3),SA.Node(7),"",'FWD(20)','')
+    sa.add_edge_indirect(SA.Node(1000),SA.Node(2),"",'FWD(20)','')
     return sa
 
+# construct sa
+def construct_sa_random(sa, num_of_edges, count_1, count_2):
 
 
-
+    sa.add_edge_indirect(SA.Node(count_1-1),SA.Node(count_1),"",'FWD(20)','')
+    sa.add_edge_indirect(SA.Node(count_2),SA.Node(count_2-1),"",'FWD(20)','')
+    return sa
 
 def path_match_sa(sa, all_path):
     sub_sa = sa.divide_sa()
     # print sub_sa
     sub_sa_1 = sub_sa[sub_sa.keys()[0]]
     sub_sa_2 = sub_sa[sub_sa.keys()[1]]
+
     sa_paths = {}
     sa_rescource = {sub_sa_1:70, sub_sa_2:50}
     old_path = copy.deepcopy(all_path)
     for key in sub_sa:
+        # sub_sa[key].draw_sa("result1")
         sa_paths[sub_sa[key]] = []
         for path in all_path:
             if sub_sa[key].accepts_with_state(path, sub_sa[key].start, sub_sa[key].state_configuration):
@@ -210,40 +182,49 @@ def mip(sa_path, topo, sa_resource):
     return m, R
 
 def test():
-    result = open("result.txt", "w")
-    result.truncate()
-    X, Y, Z = [], [], []
+    # x = np.linspace(1, 101)
+    # y = np.linspace(0, 0.1)
+    plt.style.use('ggplot')
+    plt.xlabel("SA中边的个数", fontsize='xx-large')
+    plt.ylabel("时间/s", fontsize='xx-large')
+    # plt.title("Time and the num of edges of SA")
     topo_file = open("topo.txt","r")
     topo = construct_topo_from_snap_topo(topo_file)
+    count_1 = 7
+    count_2 = 1000
     sa = construct_sa()
-    # draw_topo(topo)
-    count = 0
-    node = topo.nodes()
-    for i in node:
-        for j in node:
-            count += 1
-            if j == i:
-                continue
-            X.append(i)
-            Y.append(j)
-            print "waiting...%s...%s" %(100.0 * count/len(node)/(len(node)-1), count)
-            c_s = time.time()
-            all_path = nx.all_simple_paths(topo, str(i), str(j))
-            all_path = [x for x in all_path]
-            # 随机抽取部分路径
-            # all_path = random.sample(all_path, len(all_path))
-            sa_paths, sa_rescource = path_match_sa(sa, all_path)
-            m, r = mip(sa_paths, topo, sa_rescource)
-            using_time = time.time() - c_s
-            Z.append(1.0*using_time)
+    X, Y = [], []
+    for i in range(0, 100):
+        count_1 += 1
+        count_2 += 1
+        sa = construct_sa_random(sa, i, count_1,count_2)
+        sa, edge1, edge2 = last_two_edge(sa, count_1, count_2)
+        # sa.draw_sa("result")
+        # print "waiting...%s...%s" %(100.0 * count/17/16, count)
+        c_s = time.time()
+        all_path = nx.all_simple_paths(topo, '10', '8')
+        all_path = [x for x in all_path]
+        # 随机抽取部分路径
+        all_path = random.sample(all_path, len(all_path)/100)
+        sa_paths, sa_rescource = path_match_sa(sa, all_path)
 
-    X, Y = [int(x) for x in X],[int(y) for y in Y]
-    print >> result, X
-    print >> result, Y
-    print >> result, Z
-    result.close()
-    draw_3d(X, Y, Z)
+        m, r = mip(sa_paths, topo, sa_rescource)
+        using_time = time.time() - c_s
 
-# test()
+        plt.scatter(len(sa.edges),using_time)
+        X.append(len(sa.edges))
+        Y.append(using_time)
+        # sa.del_edge(edge1)
+        # sa.del_edge(edge2)
+        # plt.plot(x, using_time)
+        # plt.ylim(-0.02, 0.1)
+    file = open("result.txt", "w")
+    print >> file, X
+    print >> file, Y
+
+    plt.show()
+
+
+test()
 
 

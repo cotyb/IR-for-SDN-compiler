@@ -64,12 +64,18 @@ if __name__ == "__main__":
         # print m
         Merlin_fsm.append(fsm_2_17.fsm(alphabet=a, states=s, initial=i, finals=f, map=m))
     Merlin_merged_fsm = Merlin_fsm[0]
-    for fsm in Merlin_fsm[1:]:
-        Merlin_merged_fsm.intersection(fsm)
+
+    # for fsm in Merlin_fsm[1:]:
+    #     Merlin_merged_fsm.union(fsm)
+    print Merlin_merged_fsm
+    print Merlin_fsm[1]
+    print Merlin_merged_fsm.union(Merlin_fsm[1])
 
     result = SNAP_fsm.union(Merlin_merged_fsm)
+    result = fsm2SA(result)
+
     # change fsm to SA
-    sa = fsm2SA(result)
+    # sa = fsm2SA(result)
     sa.sa_str()
     sa.draw_sa("result")
 

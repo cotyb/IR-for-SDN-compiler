@@ -1,4 +1,8 @@
 #-*- coding: UTF-8 -*-
+
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 import time
 import Merlin2_SA
 import numpy as np
@@ -50,12 +54,12 @@ def test():
     x = np.linspace(1, 101)
     y = np.linspace(0, 0.1)
     plt.style.use('ggplot')
-    plt.xlabel("Num of Merlin statements/#")
-    plt.ylabel("Time/s")
-    plt.title("Time and the num of Merlin statements")
+    plt.xlabel("Merlin声明语句为100条时的实验次数编号")
+    plt.ylabel("时间/s")
+    # plt.title("Time and the num of Merlin statements")
     for i in range(1, 101):
-        # policy = construct_Merlin_policy(100)
-        policy = construct_Merlin_policy(i)
+        policy = construct_Merlin_policy(100)
+        # policy = construct_Merlin_policy(i)
         t_s = time.time()
         statement, constraint = Merlin2_SA.parser_policy(policy)
         all_sa = Merlin2_SA.policy2_SA(statement, constraint)

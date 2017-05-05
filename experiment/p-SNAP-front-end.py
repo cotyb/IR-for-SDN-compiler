@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+import sys
+
 import time
 import SNAP2_SA
 import numpy as np
@@ -6,6 +9,9 @@ import matplotlib.pyplot as plt
 import random
 import snap.policies as policies
 import snap.stateful as stateful
+
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 ports = [1,2,3,4,5,6]
 all_p = [policies.get_dns_tunnel_policy(ports), policies.get_sidejack_policy(ports),
@@ -19,8 +25,8 @@ def test():
     x = np.linspace(1, 22)
     y = np.linspace(0, 0.1)
     plt.style.use('ggplot')
-    plt.xlabel("SNAP app")
-    plt.ylabel("Time/s")
+    plt.xlabel("SNAP应用")
+    plt.ylabel("时间/s")
     # plt.title("Time and the num of Merlin statements")
     for i in range(len(all_p)):
         # policy = construct_Merlin_policy(100)
@@ -32,10 +38,10 @@ def test():
         sa = SNAP2_SA.xfdd_tree2_SA(xfdd_tree)
 
         using_time = time.time() - t_s
-        plt.bar(i,using_time, color='r')
+        plt.bar(i,using_time, color='b')
 
     plt.xlim(0,21)
-    plt.ylim(0,0.15)
+    plt.ylim(0,0.13)
     plt.show()
 
 test()

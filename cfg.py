@@ -4,6 +4,8 @@
 
 function = ["dpi", "nat","ftp"]
 fun_switch = {'dpi':['a', 'b'], 'nat':['c', 'd'], 'ftp':['f']}
+
+
 fun_guard_update = {'dpi':['', ''], 'nat':['', ''],  'ftp':['']}
 
 
