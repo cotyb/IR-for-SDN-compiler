@@ -1,11 +1,21 @@
+'''
+test the performance of SA back end with many SA in stanford topo
+'''
 import SA
-import networkx
+import networkx as nx
 from gurobipy import *
 import copy
 import matplotlib.pyplot as plt
+import Stanford
+
+def construct_topo_from_snap_topo(topo_txt):
+    topo = nx.Graph()
+    for edge in topo_txt:
+        pass
+
 
 # construct topology and compute all simple path
-topo = networkx.Graph()
+topo = nx.Graph()
 # topo.add_edges_from([('i','a'),('i','c'),('i','b'),('a','d'),('a','z'),('c','z'),('b','z'),('b','f'),('z','d'),('z','j'),('z','f'),('d','g'),('j','g'),('f','g')])
 topo.add_edge('i','a',{'cc':100})
 topo.add_edge('i','c',{'cc':100})
@@ -25,7 +35,7 @@ topo.add_edge('f','g',{'cc':100})
 # plt.figure()
 # networkx.draw(topo, pos,with_labels=True)
 # plt.show()
-all_path = networkx.all_simple_paths(topo, 'i','g')
+all_path = nx.all_simple_paths(topo, 'i','g')
 
 print topo.edge['z']['f']['cc']
 

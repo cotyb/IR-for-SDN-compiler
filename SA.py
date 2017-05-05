@@ -87,7 +87,7 @@ class SA(object):
         '''
         if len(path) == 0:
             return False
-        pattern = re.compile('FWD\\((.)\\)')
+        pattern = re.compile('FWD\\((.*)\\)')
         state = self.start
         for edge in self.edges:
             if edge.start == state:
@@ -102,7 +102,7 @@ class SA(object):
 
 
     def match(self, path, state):
-        pattern = re.compile('FWD\\((.)\\)')
+        pattern = re.compile('FWD\\((.*)\\)')
         if len(path) == 0:
             for edge in self.edges:
                 if state == edge.start and edge.end == self.end:
@@ -133,7 +133,7 @@ class SA(object):
                 if start == edge.start and edge.end == self.end:
                     return True
             return False
-        pattern = re.compile('FWD\\((.)\\)')
+        pattern = re.compile('FWD\\((.*)\\)')
         for edge in self.edges:
             for key in state:
                 exec(key+'='+str(state[key]))
