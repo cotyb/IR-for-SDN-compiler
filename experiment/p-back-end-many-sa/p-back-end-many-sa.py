@@ -211,7 +211,7 @@ def test():
         m, r = mip(sa_paths, topo, sa_rescource)
         using_time = time.time() - c_s
 
-        plt.scatter(len(sa.edges),using_time)
+        plt.scatter(len(sa.edges),using_time, s=50)
         X.append(len(sa.edges))
         Y.append(using_time)
         # sa.del_edge(edge1)
